@@ -1,4 +1,4 @@
-﻿using Microsoft.Win32;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -199,12 +199,21 @@ namespace XDM.Core.Util
             return OpenFile(path);
         }
 
-        private static string FindChromeExecutableFromRegistry()
+        private static string? FindChromeExecutableFromRegistry()
         {
             try
             {
                 using var regKey = Registry.ClassesRoot.OpenSubKey(@"ChromeHTML\shell\open\command");
-                return FileHelper.GetFileNameFromQuote((string)regKey.GetValue(null));
+                if (regKey == null)
+                {
+                    return null;
+                }
+                var value = regKey.GetValue(null) as string;
+                if (value == null)
+                {
+                    return null;
+                }
+                return FileHelper.GetFileNameFromQuote(value);
             }
             catch (Exception ex)
             {
@@ -213,7 +222,7 @@ namespace XDM.Core.Util
             return null;
         }
 
-        public static string GetChromeExecutable()
+        public static string? GetChromeExecutable()
         {
             var os = Environment.OSVersion.Platform;
             switch (os)
@@ -227,11 +236,11 @@ namespace XDM.Core.Util
                     var suffix = "Google\\Chrome\\Application\\chrome.exe";
                     foreach (var path in new[] {
                         Path.Combine(Environment.GetEnvironmentVariable("PROGRAMFILES",
-                            EnvironmentVariableTarget.Machine),suffix),
+                            EnvironmentVariableTarget.Machine) ?? string.Empty, suffix),
                         Path.Combine(Environment.GetEnvironmentVariable("PROGRAMFILES(X86)",
-                            EnvironmentVariableTarget.Machine),suffix),
+                            EnvironmentVariableTarget.Machine) ?? string.Empty, suffix),
                         Path.Combine(Environment.GetEnvironmentVariable("LOCALAPPDATA",
-                            EnvironmentVariableTarget.User),suffix),
+                            EnvironmentVariableTarget.User) ?? string.Empty, suffix),
                     })
                     {
                         if (File.Exists(path)) return path;
@@ -271,11 +280,11 @@ namespace XDM.Core.Util
                     var suffix = "Mozilla Firefox\\firefox.exe";
                     foreach (var path in new[] {
                         Path.Combine(Environment.GetEnvironmentVariable("PROGRAMFILES",
-                            EnvironmentVariableTarget.Machine),suffix),
+                            EnvironmentVariableTarget.Machine) ?? "", suffix),
                         Path.Combine(Environment.GetEnvironmentVariable("PROGRAMFILES(X86)",
-                            EnvironmentVariableTarget.Machine),suffix),
+                            EnvironmentVariableTarget.Machine) ?? "", suffix),
                         Path.Combine(Environment.GetEnvironmentVariable("LOCALAPPDATA",
-                            EnvironmentVariableTarget.User),suffix),
+                            EnvironmentVariableTarget.User) ?? "", suffix),
                     })
                     {
                         if (File.Exists(path)) return path;
@@ -315,11 +324,11 @@ namespace XDM.Core.Util
                     var suffix = @"Edge\Application\msedge.exe";
                     foreach (var path in new[] {
                         Path.Combine(Environment.GetEnvironmentVariable("PROGRAMFILES",
-                            EnvironmentVariableTarget.Machine),suffix),
+                            EnvironmentVariableTarget.Machine) ?? string.Empty, suffix),
                         Path.Combine(Environment.GetEnvironmentVariable("PROGRAMFILES(X86)",
-                            EnvironmentVariableTarget.Machine),suffix),
+                            EnvironmentVariableTarget.Machine) ?? string.Empty, suffix),
                         Path.Combine(Environment.GetEnvironmentVariable("LOCALAPPDATA",
-                            EnvironmentVariableTarget.User),suffix),
+                            EnvironmentVariableTarget.User) ?? string.Empty, suffix),
                     })
                     {
                         if (File.Exists(path)) return path;

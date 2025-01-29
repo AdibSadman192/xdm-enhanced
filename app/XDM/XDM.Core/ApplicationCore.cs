@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -27,6 +27,11 @@ using XDM.Compatibility;
 
 namespace XDM.Core
 {
+    /// <summary>
+    /// Core application class that manages the main functionality of XDM.
+    /// This class is responsible for initializing and coordinating all major components
+    /// of the download manager.
+    /// </summary>
     public class ApplicationCore : IApplicationCore
     {
         public Version AppVerion => new(8, 0, 0);
@@ -44,7 +49,7 @@ namespace XDM.Core
             ApplicationContext.Initialized += AppInstance_Initialized;
         }
 
-        private void AppInstance_Initialized(object sender, EventArgs e)
+        private void AppInstance_Initialized(object? sender, EventArgs e)
         {
             awakePingTimer = new Timer(60000)
             {
@@ -144,44 +149,50 @@ namespace XDM.Core
             else if (liveDownloads.Count >= Config.Instance.MaxParallelDownloads)
             {
                 startImmediately = false;
-                queuedDownloads.Add(id, false);
-            }
-
-            ApplicationContext.Application.AddItemToTop(id, download.TargetFileName, targetDir, DateTime.Now,
-                download.FileSize, download.Type, download.FileNameFetchMode,
-                download.PrimaryUrl?.ToString(), startType, authentication,
-                proxyInfo);
-
-            if (startImmediately)
-            {
-                this.liveDownloads.Add(download.Id, new KeyValuePair<IBaseDownloader, bool>(download, false));
-                download.Started += HandleDownloadStart;
-                download.Probed += HandleProbeResult;
-                download.Finished += DownloadFinished;
-                download.ProgressChanged += DownloadProgressChanged;
-                download.AssembingProgressChanged += AssembleProgressChanged;
-                download.Cancelled += DownloadCancelled;
-                download.Failed += DownloadFailed;
-
-                var showProgress = Config.Instance.ShowProgressWindow;
-                if (showProgress)
+                if (id != null)
                 {
-                    ApplicationContext.Application.RunOnUiThread(() =>
-                    {
-                        var prgWin = CreateProgressWindow(download);
-                        activeProgressWindows[download.Id] = prgWin;
-                        prgWin.FileNameText = download.TargetFileName;
-                        prgWin.FileSizeText = $"{TextResource.GetText("STAT_DOWNLOADING")} ...";
-                        prgWin.UrlText = download.PrimaryUrl?.ToString() ?? string.Empty;
-                        prgWin.ShowProgressWindow();
-                    });
+                    queuedDownloads.Add(id, false);
                 }
-
-                download.Start();
             }
-            else
+
+            if (id != null && download.TargetFileName != null)
             {
-                download.SaveForLater();
+                ApplicationContext.Application.AddItemToTop(id, download.TargetFileName, targetDir, DateTime.Now,
+                    download.FileSize, download.Type, download.FileNameFetchMode,
+                    download.PrimaryUrl?.ToString(), startType, authentication,
+                    proxyInfo);
+
+                if (startImmediately)
+                {
+                    this.liveDownloads.Add(download.Id, new KeyValuePair<IBaseDownloader, bool>(download, false));
+                    download.Started += HandleDownloadStart;
+                    download.Probed += HandleProbeResult;
+                    download.Finished += DownloadFinished;
+                    download.ProgressChanged += DownloadProgressChanged;
+                    download.AssembingProgressChanged += AssembleProgressChanged;
+                    download.Cancelled += DownloadCancelled;
+                    download.Failed += DownloadFailed;
+
+                    var showProgress = Config.Instance.ShowProgressWindow;
+                    if (showProgress)
+                    {
+                        ApplicationContext.Application.RunOnUiThread(() =>
+                        {
+                            var prgWin = CreateProgressWindow(download);
+                            activeProgressWindows[download.Id] = prgWin;
+                            prgWin.FileNameText = download.TargetFileName;
+                            prgWin.FileSizeText = $"{TextResource.GetText("STAT_DOWNLOADING")} ...";
+                            prgWin.UrlText = download.PrimaryUrl?.ToString() ?? string.Empty;
+                            prgWin.ShowProgressWindow();
+                        });
+                    }
+
+                    download.Start();
+                }
+                else
+                {
+                    download.SaveForLater();
+                }
             }
         }
 
@@ -314,7 +325,7 @@ namespace XDM.Core
                             activeProgressWindows[download.Id] = prgWin;
                         }
                         prgWin.FileNameText = download.TargetFileName;
-                        prgWin.FileSizeText = $"{TextResource.GetText("STAT_DOWNLOADING")} ...";
+                        prgWin.FileSizeText = $"{TextResource.GetText("STAT_DOWNLOADING")} {FormattingHelper.FormatSize(0)} / {FormattingHelper.FormatSize(download.FileSize)}";
                         prgWin.DownloadStarted();
                         prgWin.ShowProgressWindow();
                     });

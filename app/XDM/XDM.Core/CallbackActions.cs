@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using TraceLog;
 using XDM.Core;
@@ -27,26 +27,22 @@ namespace XDM.Core
             Log.Debug("Final file name: " + filePath);
             var download = ApplicationContext.MainWindow.FindInProgressItem(id);
             if (download == null) return;
-            var downloadEntry = download.DownloadEntry;
-            downloadEntry.Progress = 100;
+            download.Progress = 100;
 
             var finishedEntry = new FinishedDownloadItem
             {
                 Name = Path.GetFileName(filePath),
-                Id = downloadEntry.Id,
-                DateAdded = downloadEntry.DateAdded,
-                Size = downloadEntry.Size > 0 ? downloadEntry.Size : finalFileSize,
-                DownloadType = downloadEntry.DownloadType,
-                TargetDir = Path.GetDirectoryName(filePath)!,
-                PrimaryUrl = downloadEntry.PrimaryUrl,
-                Authentication = downloadEntry.Authentication,
-                Proxy = downloadEntry.Proxy
+                Id = download.Id,
+                Date = download.Date,
+                Size = download.Size > 0 ? download.Size : finalFileSize,
+                Type = download.Type,
+                Folder = Path.GetDirectoryName(filePath) ?? string.Empty
             };
 
             ApplicationContext.MainWindow.AddToTop(finishedEntry);
             ApplicationContext.MainWindow.Delete(download);
 
-            QueueManager.RemoveFinishedDownload(download.DownloadEntry.Id);
+            QueueManager.RemoveFinishedDownload(download.Id);
 
             if (ApplicationContext.CoreService.ActiveDownloadCount == 0 && ApplicationContext.MainWindow.IsInProgressViewSelected)
             {

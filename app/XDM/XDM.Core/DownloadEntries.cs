@@ -1,60 +1,39 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using System;
 using XDM.Core.Downloader;
+using XDM.Core.Download;
 
 namespace XDM.Core
 {
-    public abstract class DownloadItemBase : IComparable
+    public class DownloadItemBase : IComparable<DownloadItemBase>
     {
-        public string Id { get; set; }
-
-        public string Name { get; set; }
-
+        public string Id { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public string Folder { get; set; } = string.Empty;
         public long Size { get; set; }
+        public DateTime Date { get; set; }
+        public string Type { get; set; } = string.Empty;
 
-        public string? TargetDir { get; set; }
-
-        public DateTime DateAdded { get; set; }
-
-        public string DownloadType { get; set; }
-
-        public FileNameFetchMode FileNameFetchMode { get; set; }
-
-        public string PrimaryUrl { get; set; }
-
-        public string RefererUrl { get; set; }
-
-        public AuthenticationInfo? Authentication { get; set; }
-
-        public ProxyInfo? Proxy { get; set; }
-
-        public int MaxSpeedLimitInKiB { get; set; }
-
-        public int CompareTo(object? obj)
+        public int CompareTo(DownloadItemBase? other)
         {
-            if (obj == null) return 1;
-            if (obj is DownloadItemBase other)
-                return this.Name.CompareTo(other.Name);
-            else
-                throw new ArgumentException("Object is not a DownloadItemBase");
+            if (other == null) return 1;
+            return other.Date.CompareTo(this.Date);
         }
 
         public override string ToString()
         {
-            return Name ?? "";
+            return $"{Name} [{Size}] - {Date}";
         }
     }
 
-    public class InProgressDownloadItem
-        : DownloadItemBase
+    public class InProgressDownloadItem : DownloadItemBase
     {
-        public int Progress { get; set; }
-
+        public string TargetFileName { get; set; } = string.Empty;
+        public string PrimaryUrl { get; set; } = string.Empty;
         public DownloadStatus Status { get; set; }
-
-        public string? DownloadSpeed { get; set; }
-
-        public string? ETA { get; set; }
+        public string FileNameFetchMode { get; set; } = string.Empty;
+        public string Authentication { get; set; } = string.Empty;
+        public string ProxyInfo { get; set; } = string.Empty;
     }
 
     public class FinishedDownloadItem : DownloadItemBase

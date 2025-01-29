@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -30,6 +30,84 @@ namespace XDM.Core.BrowserMonitoring
             hlsVideoList.Clear();
             dashVideoList.Clear();
             videoList.Clear();
+            ApplicationContext.BroadcastConfigChange();
+        }
+
+        public void AddOrUpdateYtVideo(string url, DualSourceHTTPDownloadInfo info, StreamingVideoDisplayInfo displayInfo)
+        {
+            if (ytVideoList.ContainsKey(url))
+            {
+                ytVideoList[url] = new KeyValuePair<DualSourceHTTPDownloadInfo, StreamingVideoDisplayInfo>(info, displayInfo);
+                OnMediaUpdated(new MediaInfoEventArgs(url, info, displayInfo));
+            }
+            else
+            {
+                ytVideoList.Add(url, new KeyValuePair<DualSourceHTTPDownloadInfo, StreamingVideoDisplayInfo>(info, displayInfo));
+                OnMediaAdded(new MediaInfoEventArgs(url, info, displayInfo));
+            }
+            ApplicationContext.BroadcastConfigChange();
+        }
+
+        public void AddOrUpdateVideo(string url, SingleSourceHTTPDownloadInfo info, StreamingVideoDisplayInfo displayInfo)
+        {
+            if (videoList.ContainsKey(url))
+            {
+                videoList[url] = new KeyValuePair<SingleSourceHTTPDownloadInfo, StreamingVideoDisplayInfo>(info, displayInfo);
+                OnMediaUpdated(new MediaInfoEventArgs
+                {
+                    MediaInfo = new MediaInfo(url, info.File, displayInfo.Title, DateTime.Now, displayInfo.TabId)
+                });
+            }
+            else
+            {
+                videoList.Add(url, new KeyValuePair<SingleSourceHTTPDownloadInfo, StreamingVideoDisplayInfo>(info, displayInfo));
+                OnMediaAdded(new MediaInfoEventArgs
+                {
+                    MediaInfo = new MediaInfo(url, info.File, displayInfo.Title, DateTime.Now, displayInfo.TabId)
+                });
+            }
+            ApplicationContext.BroadcastConfigChange();
+        }
+
+        public void AddOrUpdateHlsVideo(string url, MultiSourceHLSDownloadInfo info, StreamingVideoDisplayInfo displayInfo)
+        {
+            if (hlsVideoList.ContainsKey(url))
+            {
+                hlsVideoList[url] = new KeyValuePair<MultiSourceHLSDownloadInfo, StreamingVideoDisplayInfo>(info, displayInfo);
+                OnMediaUpdated(new MediaInfoEventArgs
+                {
+                    MediaInfo = new MediaInfo(url, info.File, displayInfo.Title, DateTime.Now, displayInfo.TabId)
+                });
+            }
+            else
+            {
+                hlsVideoList.Add(url, new KeyValuePair<MultiSourceHLSDownloadInfo, StreamingVideoDisplayInfo>(info, displayInfo));
+                OnMediaAdded(new MediaInfoEventArgs
+                {
+                    MediaInfo = new MediaInfo(url, info.File, displayInfo.Title, DateTime.Now, displayInfo.TabId)
+                });
+            }
+            ApplicationContext.BroadcastConfigChange();
+        }
+
+        public void AddOrUpdateDashVideo(string url, MultiSourceDASHDownloadInfo info, StreamingVideoDisplayInfo displayInfo)
+        {
+            if (dashVideoList.ContainsKey(url))
+            {
+                dashVideoList[url] = new KeyValuePair<MultiSourceDASHDownloadInfo, StreamingVideoDisplayInfo>(info, displayInfo);
+                OnMediaUpdated(new MediaInfoEventArgs
+                {
+                    MediaInfo = new MediaInfo(url, info.File, displayInfo.Title, DateTime.Now, displayInfo.TabId)
+                });
+            }
+            else
+            {
+                dashVideoList.Add(url, new KeyValuePair<MultiSourceDASHDownloadInfo, StreamingVideoDisplayInfo>(info, displayInfo));
+                OnMediaAdded(new MediaInfoEventArgs
+                {
+                    MediaInfo = new MediaInfo(url, info.File, displayInfo.Title, DateTime.Now, displayInfo.TabId)
+                });
+            }
             ApplicationContext.BroadcastConfigChange();
         }
 
@@ -369,10 +447,99 @@ namespace XDM.Core.BrowserMonitoring
             }
         }
 
+        public void RemoveVideo(string url)
+        {
+            if (ytVideoList.ContainsKey(url))
+            {
+                ytVideoList.Remove(url);
+            }
+            else if (videoList.ContainsKey(url))
+            {
+                videoList.Remove(url);
+            }
+            else if (hlsVideoList.ContainsKey(url))
+            {
+                hlsVideoList.Remove(url);
+            }
+            else if (dashVideoList.ContainsKey(url))
+            {
+                dashVideoList.Remove(url);
+            }
+            ApplicationContext.BroadcastConfigChange();
+        }
+
+        public void RemoveVideoByTabUrl(string tabUrl)
+        {
+            var keysToRemove = new List<string>();
+
+            foreach (var entry in ytVideoList)
+            {
+                if (entry.Value.Value.TabUrl == tabUrl)
+                {
+                    keysToRemove.Add(entry.Key);
+                }
+            }
+            foreach (var key in keysToRemove)
+            {
+                ytVideoList.Remove(key);
+            }
+
+            keysToRemove.Clear();
+            foreach (var entry in videoList)
+            {
+                if (entry.Value.Value.TabUrl == tabUrl)
+                {
+                    keysToRemove.Add(entry.Key);
+                }
+            }
+            foreach (var key in keysToRemove)
+            {
+                videoList.Remove(key);
+            }
+
+            keysToRemove.Clear();
+            foreach (var entry in hlsVideoList)
+            {
+                if (entry.Value.Value.TabUrl == tabUrl)
+                {
+                    keysToRemove.Add(entry.Key);
+                }
+            }
+            foreach (var key in keysToRemove)
+            {
+                hlsVideoList.Remove(key);
+            }
+
+            keysToRemove.Clear();
+            foreach (var entry in dashVideoList)
+            {
+                if (entry.Value.Value.TabUrl == tabUrl)
+                {
+                    keysToRemove.Add(entry.Key);
+                }
+            }
+            foreach (var key in keysToRemove)
+            {
+                dashVideoList.Remove(key);
+            }
+
+            ApplicationContext.BroadcastConfigChange();
+        }
+
         public static bool IsFFmpegOK(string id)
         {
             if (!ApplicationContext.VideoTracker.IsFFmpegRequiredForDownload(id)) return true;
             return FFmpegMediaProcessor.IsFFmpegInstalled();
+        }
+
+        private void OnMediaAdded(MediaInfoEventArgs e)
+        {
+            MediaAdded?.Invoke(this, e);
+        }
+
+        private void OnMediaUpdated(MediaInfoEventArgs e)
+        {
+            MediaUpdated?.Invoke(this, e);
         }
     }
 
@@ -395,8 +562,17 @@ namespace XDM.Core.BrowserMonitoring
         public string TabId { get; set; }
     }
 
-    public class MediaInfoEventArgs :EventArgs
+    public class MediaInfoEventArgs : EventArgs
     {
+        public MediaInfoEventArgs()
+        {
+        }
+
+        public MediaInfoEventArgs(string id, DualSourceHTTPDownloadInfo info, StreamingVideoDisplayInfo displayInfo)
+        {
+            MediaInfo = new MediaInfo(id, info.File, displayInfo.Title, DateTime.Now, displayInfo.TabId);
+        }
+
         public MediaInfo MediaInfo { get; set; }
     }
 }

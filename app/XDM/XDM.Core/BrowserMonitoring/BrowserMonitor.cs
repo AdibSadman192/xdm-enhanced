@@ -1,9 +1,13 @@
-﻿using System;
+using System;
 using TraceLog;
 using XDM.Core;
 
 namespace XDM.Core.BrowserMonitoring
 {
+    /// <summary>
+    /// Provides functionality for monitoring browser activities and handling browser integration.
+    /// This class is responsible for managing communication between the browser extension and XDM.
+    /// </summary>
     public static class BrowserMonitor
     {
         //private static IpcServer ipcServer;

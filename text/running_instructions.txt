@@ -1,0 +1,190 @@
+# XDM Enhanced - Running Instructions
+
+## Prerequisites
+
+1. Development Environment:
+   - Visual Studio 2022 or later
+   - .NET 6.0 SDK or later
+   - Node.js 14+ (for browser extension development)
+   - Git
+
+2. System Requirements:
+   - Windows 10/11
+   - 4GB RAM minimum (8GB recommended)
+   - 1GB free disk space
+   - Internet connection
+
+## Building from Source
+
+1. Clone Repository:
+   ```powershell
+   git clone https://github.com/AdibSadman192/xdm-enhanced.git
+   cd xdm-enhanced
+   ```
+
+2. Build Solution:
+   ```powershell
+   dotnet restore
+   dotnet build --configuration Release
+   ```
+
+3. Build Browser Extensions:
+   ```powershell
+   cd app/XDM/chrome-extension
+   npm install
+   npm run build
+   ```
+
+## Running the Application
+
+1. Development Mode:
+   ```powershell
+   cd app/XDM/XDM.Wpf.UI
+   dotnet run
+   ```
+
+2. Production Mode:
+   - Navigate to `app/XDM/XDM.Wpf.UI/bin/Release/net6.0-windows`
+   - Run `XDM.Wpf.UI.exe`
+
+3. Browser Integration:
+   - Chrome/Edge/Brave:
+     1. Open Extensions page
+     2. Enable Developer Mode
+     3. Load unpacked extension from `app/XDM/chrome-extension/dist`
+
+## Configuration
+
+1. Application Settings:
+   - Location: `%APPDATA%/XDM/settings.json`
+   - Key settings:
+     * Download directory
+     * Maximum concurrent downloads
+     * Bandwidth limits
+     * Network preferences
+
+2. Browser Extension Settings:
+   - File types to monitor
+   - Video detection settings
+   - Context menu options
+   - Network filters
+
+## Testing Features
+
+1. Basic Downloads:
+   ```powershell
+   # Run automated tests
+   cd app/XDM/XDM.Tests
+   dotnet test
+   
+   # Manual testing
+   - Test direct downloads
+   - Test downloads with authentication
+   - Test downloads with different file types
+   ```
+
+2. Advanced Features:
+   - Video Downloads:
+     * YouTube videos (various qualities)
+     * Streaming content (HLS, DASH)
+     * Video conversion (hardware acceleration)
+
+   - Cloud Integration:
+     * OneDrive uploads
+     * Google Drive sync
+     * Dropbox transfers
+
+   - Batch Operations:
+     * Multiple file downloads
+     * Batch renaming
+     * Category assignment
+
+3. Network Features:
+   - Smart Scheduling:
+     * Test off-peak downloads
+     * Verify bandwidth prediction
+     * Check network monitoring
+
+   - Download Optimization:
+     * Verify chunked downloads
+     * Test resume capability
+     * Check bandwidth allocation
+
+## Troubleshooting
+
+1. Common Issues:
+   - Browser extension not detecting downloads:
+     * Verify extension permissions
+     * Check browser console for errors
+     * Ensure native messaging host is registered
+
+   - Download failures:
+     * Check network connectivity
+     * Verify file permissions
+     * Review error logs
+
+   - Performance issues:
+     * Monitor system resources
+     * Check bandwidth settings
+     * Verify concurrent download limits
+
+2. Log Files:
+   - Application logs: `%APPDATA%/XDM/logs`
+   - Debug logs: Enable in settings
+   - Network monitor logs: View in UI
+
+3. Diagnostics:
+   ```powershell
+   # Run diagnostics tool
+   cd app/XDM/XDM.Diagnostics
+   dotnet run --diagnose
+   ```
+
+## Security Considerations
+
+1. HTTPS Downloads:
+   - Certificate validation enabled
+   - Secure password storage
+   - Encrypted configuration
+
+2. File Security:
+   - Integrity checking
+   - Safe file handling
+   - Malware scanning (if enabled)
+
+## Performance Optimization
+
+1. Memory Usage:
+   - Buffer pool configuration
+   - Cache settings
+   - Resource cleanup
+
+2. Network Settings:
+   - Concurrent connections
+   - Bandwidth allocation
+   - Connection pooling
+
+## Updating
+
+1. Application Updates:
+   - Automatic update checks
+   - Delta updates
+   - Manual update option
+
+2. Extension Updates:
+   - Chrome Web Store updates
+   - Manual extension updates
+
+## Support
+
+1. Documentation:
+   - Online help: https://github.com/AdibSadman192/xdm-enhanced/wiki
+   - API docs: /docs/API.md
+   - Architecture: /docs/ARCHITECTURE.md
+
+2. Issue Reporting:
+   - GitHub issues
+   - Log files
+   - System information
+
+Remember to always backup your settings and downloads before major updates or configuration changes.

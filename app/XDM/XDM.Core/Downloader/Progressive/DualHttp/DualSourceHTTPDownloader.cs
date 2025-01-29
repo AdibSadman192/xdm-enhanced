@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -16,11 +16,11 @@ namespace XDM.Core.Downloader.Progressive.DualHttp
     {
         private DualSourceHTTPDownloaderState state;
         public override string Type => "Dash";
-        public override Uri PrimaryUrl => this.state?.Url1 ?? this.state?.Url2;
+        public override Uri PrimaryUrl => this.state?.Url1 ?? this.state?.Url2 ?? new Uri("about:blank");
 
-        public DualSourceHTTPDownloader(DualSourceHTTPDownloadInfo info, IHttpClient hc = null,
+        public DualSourceHTTPDownloader(DualSourceHTTPDownloadInfo info, IHttpClient? hc = null,
             AuthenticationInfo? authentication = null, ProxyInfo? proxy = null,
-            BaseMediaProcessor mediaProcessor = null)
+            BaseMediaProcessor? mediaProcessor = null)
         {
             Id = Guid.NewGuid().ToString();
 
@@ -31,10 +31,10 @@ namespace XDM.Core.Downloader.Progressive.DualHttp
                 Url1 = uri1,
                 Url2 = uri2,
                 Id = Id,
-                Cookies1 = info.Cookies1,
-                Cookies2 = info.Cookies2,
-                Headers1 = info.Headers1,
-                Headers2 = info.Headers2,
+                Cookies1 = info.Cookies1 ?? new Dictionary<string, string>(),
+                Cookies2 = info.Cookies2 ?? new Dictionary<string, string>(),
+                Headers1 = info.Headers1 ?? new Dictionary<string, string>(),
+                Headers2 = info.Headers2 ?? new Dictionary<string, string>(),
                 TempDir = Path.Combine(Config.Instance.TempDir, Id),
                 Authentication = authentication,
                 Proxy = proxy
@@ -45,28 +45,28 @@ namespace XDM.Core.Downloader.Progressive.DualHttp
                 this.state.Authentication = Helpers.GetAuthenticationInfoFromConfig(this.state.Url1);
             }
 
-            this.http = hc;
+            this.http = hc ?? new DefaultHttpClient();
             this.TargetFileName = FileHelper.SanitizeFileName(info.File);
-            this.mediaProcessor = mediaProcessor;
+            this.mediaProcessor = mediaProcessor ?? new DefaultMediaProcessor();
         }
 
-        public DualSourceHTTPDownloader(string id, IHttpClient http = null,
-            BaseMediaProcessor mediaProcessor = null)
+        public DualSourceHTTPDownloader(string id, IHttpClient? http = null,
+            BaseMediaProcessor? mediaProcessor = null)
         {
             Id = id;
             cancelFlag = new();
-            this.http = http;
-            this.mediaProcessor = mediaProcessor;
+            this.http = http ?? new DefaultHttpClient();
+            this.mediaProcessor = mediaProcessor ?? new DefaultMediaProcessor();
         }
 
         public void SetDownloadInfo(DualSourceHTTPDownloadInfo info)
         {
             this.state.Url1 = new Uri(info.Uri1);
             this.state.Url2 = new Uri(info.Uri2);
-            this.state.Cookies1 = info.Cookies1;
-            this.state.Cookies2 = info.Cookies2;
-            this.state.Headers1 = info.Headers1;
-            this.state.Headers2 = info.Headers2;
+            this.state.Cookies1 = info.Cookies1 ?? new Dictionary<string, string>();
+            this.state.Cookies2 = info.Cookies2 ?? new Dictionary<string, string>();
+            this.state.Headers1 = info.Headers1 ?? new Dictionary<string, string>();
+            this.state.Headers2 = info.Headers2 ?? new Dictionary<string, string>();
             this.SaveState();
         }
 
@@ -566,39 +566,4 @@ namespace XDM.Core.Downloader.Progressive.DualHttp
         public string? Cookies2;
         public bool Init1, Init2;
     }
-
-    //internal class CustomRedirectHandler : DelegatingHandler
-    //{
-    //    public CustomRedirectHandler(HttpMessageHandler handler) : base(handler) { }
-    //    protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
-    //    {
-    //        var res = await base.SendAsync(request, cancellationToken).ConfigureAwait(false);
-    //        if ((res.StatusCode == System.Net.HttpStatusCode.OK ||
-    //            res.StatusCode == System.Net.HttpStatusCode.PartialContent) &&
-    //            res.Content?.Headers?.ContentType?.MediaType == "text/plain")
-    //        {
-    //            Log.Debug("Rediction...");
-    //            var newUrl = await res.Content.ReadAsStringAsync().ConfigureAwait(false);
-    //            cancellationToken.ThrowIfCancellationRequested();
-    //            //#if NET5_0_OR_GREATER
-    //            //                var newUrl = await res.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
-    //            //#else
-    //            //                var newUrl = await res.Content.ReadAsStringAsync().ConfigureAwait(false);
-    //            //                cancellationToken.ThrowIfCancellationRequested();
-    //            //#endif
-
-    //            Log.Error("Special redirect to: " + newUrl);
-    //            request.RequestUri = new Uri(newUrl);
-    //            res = await base.SendAsync(request, cancellationToken).ConfigureAwait(false);
-    //        }
-    //        return res;
-    //    }
-
-    //    //private async Task ReadAsStringAsync(HttpContent hc,CancellationToken token)
-    //    //{
-    //    //    var str=hc.CopyToAsync()
-    //    //}
-    //}
-
-
 }

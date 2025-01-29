@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -12,9 +12,9 @@ namespace XDM.Core.Util
     public static class FileHelper
     {
         public static readonly Regex RxFileWithinQuote = new Regex("\\\"(.*)\\\"");
-        public static string? SanitizeFileName(string fileName)
+        public static string SanitizeFileName(string? fileName)
         {
-            if (fileName == null) return fileName;
+            if (fileName == null) return string.Empty;
             var file = fileName.Split('/').Last();
             file = fileName.Split('\\').Last();
             return string.Join("_", file.Split(Path.GetInvalidFileNameChars()));
@@ -40,9 +40,7 @@ namespace XDM.Core.Util
             return Config.Instance.DefaultDownloadFolder;
         }
 
-
-
-        public static bool AddFileExtension(string name, string contentType, out string nameWithExt)
+        public static bool AddFileExtension(string name, string? contentType, out string nameWithExt)
         {
             name = SanitizeFileName(name);
             if (name.EndsWith("."))
@@ -85,7 +83,7 @@ namespace XDM.Core.Util
             }
         }
 
-        public static string GetFileName(Uri uri, string contentType = null)
+        public static string GetFileName(Uri uri, string? contentType = null)
         {
             var name = Path.GetFileName(uri.LocalPath);
             if (string.IsNullOrEmpty(name))
@@ -100,7 +98,7 @@ namespace XDM.Core.Util
 
             if (contentType == "text/html")
             {
-                return Path.ChangeExtension(name, ".html");
+                return name + ".html";
             }
             else
             {
@@ -130,7 +128,7 @@ namespace XDM.Core.Util
             return count == 0 ? file : name + "_" + count + ext;
         }
 
-        public static string GetFileNameFromQuote(string text)
+        public static string? GetFileNameFromQuote(string? text)
         {
             if (string.IsNullOrEmpty(text))
             {

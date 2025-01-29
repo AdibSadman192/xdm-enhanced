@@ -1,0 +1,23 @@
+Required Dependencies:
+
+1. Development Environment:
+- Java Development Kit (JDK)
+- Maven
+
+2. Build Dependencies:
+- All Maven dependencies will be automatically downloaded when building the project
+
+3. Runtime Dependencies:
+- Java Runtime Environment (JRE)
+- Browser extensions for integration (Chrome/Firefox/Opera)
+- Video Streaming:
+  - FFMpeg
+- Cloud Storage:
+  - AWS SDK
+
+Installation Steps:
+1. Install JDK if not already installed
+2. Install Maven if not already installed
+3. Clone the repository
+4. Run 'mvn clean install' to build the project
+5. The compiled JAR will be available in the target directory

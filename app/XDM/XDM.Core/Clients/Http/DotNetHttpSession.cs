@@ -1,4 +1,4 @@
-﻿#if NET5_0_OR_GREATER
+#if NET5_0_OR_GREATER
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -68,9 +68,9 @@ namespace XDM.Core.Clients.Http
             return Response!.Content.ReadAsStreamAsync(this.CancellationToken).Result;
         }
 
-        public string? ReadAsString(CancelFlag cancellationToken)
+        public string ReadAsString(CancelFlag cancellationToken)
         {
-            return Response?.Content.ReadAsStringAsync(this.CancellationToken).Result;
+            return Response?.Content.ReadAsStringAsync(this.CancellationToken).Result ?? string.Empty;
         }
 
         public void EnsureSuccessStatusCode()

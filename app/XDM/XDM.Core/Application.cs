@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using TraceLog;
@@ -50,16 +50,15 @@ namespace XDM.Core
             var downloadEntry = new InProgressDownloadItem
             {
                 Name = targetFileName,
-                DateAdded = date,
-                DownloadType = type,
+                Date = date,
+                Type = type,
                 Id = id,
-                Progress = 0,
                 Size = fileSize,
                 Status = startType == DownloadStartType.Waiting ? DownloadStatus.Waiting : DownloadStatus.Stopped,
-                TargetDir = targetDir,
+                TargetFileName = targetFileName,
                 PrimaryUrl = primaryUrl,
-                Authentication = authentication,
-                Proxy = proxyInfo
+                Authentication = authentication?.ToString() ?? string.Empty,
+                ProxyInfo = proxyInfo?.ToString() ?? string.Empty
             };
             AppDB.Instance.Downloads.AddNewDownload(downloadEntry);
 
@@ -118,7 +117,10 @@ namespace XDM.Core
             {
                 var name = Path.GetFileName(filePath);
                 var folder = Path.GetDirectoryName(filePath);
-                AppDB.Instance.Downloads.MarkAsFinished(id, finalFileSize, name, folder);
+                if (folder != null)
+                {
+                    AppDB.Instance.Downloads.MarkAsFinished(id, finalFileSize, name, folder);
+                }
             }
 
             Log.Debug("Final file name: " + filePath);
@@ -129,13 +131,10 @@ namespace XDM.Core
                 {
                     Name = Path.GetFileName(filePath),
                     Id = downloadEntry.Id,
-                    DateAdded = downloadEntry.DateAdded,
+                    Date = downloadEntry.Date,
                     Size = downloadEntry.Size > 0 ? downloadEntry.Size : finalFileSize,
-                    DownloadType = downloadEntry.DownloadType,
-                    TargetDir = Path.GetDirectoryName(filePath)!,
-                    PrimaryUrl = downloadEntry.PrimaryUrl,
-                    Authentication = downloadEntry.Authentication,
-                    Proxy = downloadEntry.Proxy
+                    Type = downloadEntry.Type,
+                    Folder = Path.GetDirectoryName(filePath) ?? string.Empty
                 };
                 AppDB.Instance.Downloads.UpdateDownloadEntry(finishedEntry);
 
@@ -208,7 +207,7 @@ namespace XDM.Core
                 }
                 if (folder != null)
                 {
-                    downloadEntry.DownloadEntry.TargetDir = folder;
+                    downloadEntry.Folder = folder;
                 }
                 //this.SaveInProgressList();
             });
@@ -219,7 +218,7 @@ namespace XDM.Core
             var idDict = new Dictionary<string, DownloadItemBase>();
             var download = ApplicationContext.MainWindow.FindInProgressItem(downloadId);
             if (download == null) return;
-            idDict[download.DownloadEntry.Id] = download.DownloadEntry;
+            idDict[download.Id] = download;
             ApplicationContext.CoreService.ResumeDownload(idDict);
         }
 

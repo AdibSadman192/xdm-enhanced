@@ -1,4 +1,4 @@
-﻿#if NET5_0_OR_GREATER
+#if NET5_0_OR_GREATER
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -8,23 +8,87 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
+using System.Net.Security;
 using TraceLog;
 using XDM.Core;
+using XDM.Core.Security;
 
 namespace XDM.Core.Clients.Http
 {
     internal class DotNetHttpClient : IHttpClient
     {
+        private readonly HttpClientHandler _handler;
+        private readonly HttpClient _client;
         private bool disposed;
-        private HttpClient? hc;
-        private CancellationTokenSource cts = new();
-        private ProxyInfo? proxy;
 
         public TimeSpan Timeout { get; set; } = TimeSpan.FromSeconds(100);
 
-        internal DotNetHttpClient(ProxyInfo? proxy)
+        internal DotNetHttpClient(ProxyInfo? proxyInfo = null)
         {
-            this.proxy = proxy;
+            _handler = new HttpClientHandler
+            {
+                ServerCertificateCustomValidationCallback = CertificateValidator.ValidateServerCertificate,
+                UseCookies = true,
+                AllowAutoRedirect = true,
+                AutomaticDecompression = DecompressionMethods.All,
+                PreAuthenticate = true,
+                UseDefaultCredentials = true,
+                MaxConnectionsPerServer = 100
+            };
+
+            if (proxyInfo != null)
+            {
+                ConfigureProxy(_handler, proxyInfo);
+            }
+
+            _client = new HttpClient(_handler);
+            ConfigureClient(_client);
+        }
+
+        private void ConfigureClient(HttpClient client)
+        {
+            client.DefaultRequestHeaders.Add("User-Agent", "XDM/8.0");
+            client.Timeout = this.Timeout;
+        }
+
+        private void ConfigureProxy(HttpClientHandler handler, ProxyInfo proxyInfo)
+        {
+            if (string.IsNullOrEmpty(proxyInfo.Host))
+                return;
+
+            handler.UseProxy = true;
+            handler.Proxy = ProxyHelper.CreateWebProxy(proxyInfo);
+        }
+
+        public HttpRequest CreateGetRequest(Uri uri,
+            Dictionary<string, List<string>>? headers = null,
+            string? cookies = null,
+            AuthenticationInfo? authentication = null)
+        {
+            var req = CreateRequest(uri, HttpMethod.Get, headers, cookies, authentication);
+            return new HttpRequest { Session = new DotNetHttpSession { Request = req } };
+        }
+
+        public HttpRequest CreatePostRequest(Uri uri,
+            Dictionary<string, List<string>>? headers = null,
+            string? cookies = null,
+            AuthenticationInfo? authentication = null,
+            byte[]? body = null)
+        {
+            var req = CreateRequest(uri, HttpMethod.Post, headers, cookies, authentication);
+            if (body != null)
+            {
+                req.Content = new ByteArrayContent(body);
+                if (headers != null && headers.TryGetValue("Content-Type", out List<string>? values))
+                {
+                    if (values != null && values.Count > 0)
+                    {
+                        req.Content.Headers.ContentType = new MediaTypeHeaderValue(values[0]);
+                    }
+                }
+            }
+            return new HttpRequest { Session = new DotNetHttpSession { Request = req } };
         }
 
         private HttpRequestMessage CreateRequest(Uri uri, HttpMethod method,
@@ -43,37 +107,6 @@ namespace XDM.Core.Clients.Http
                 RequestUri = uri
             };
 
-            lock (this)
-            {
-                if (this.hc == null)
-                {
-                    var handler = new HttpClientHandler
-                    {
-                        AutomaticDecompression = DecompressionMethods.All,
-                        PreAuthenticate = true,
-                        UseDefaultCredentials = true,
-                        MaxConnectionsPerServer = 100,
-                        ServerCertificateCustomValidationCallback = (a, b, c, d) => true
-                    };
-
-                    var p = ProxyHelper.GetProxy(this.proxy);
-                    if (p != null)
-                    {
-                        handler.Proxy = p;
-                    }
-
-                    if (authentication != null && !string.IsNullOrEmpty(authentication.Value.UserName))
-                    {
-                        handler.Credentials = new NetworkCredential(authentication.Value.UserName, authentication.Value.Password);
-                    }
-
-                    this.hc = new HttpClient(handler)
-                    {
-                        Timeout = this.Timeout
-                    };
-                }
-            }
-
             if (headers != null)
             {
                 foreach (var e in headers)
@@ -86,36 +119,6 @@ namespace XDM.Core.Clients.Http
                 SetHeader(http, "Cookie", cookies);
             }
             return http;
-        }
-
-        public HttpRequest CreateGetRequest(Uri uri,
-            Dictionary<string, List<string>>? headers = null,
-            string? cookies = null,
-            AuthenticationInfo? authentication = null)
-        {
-            var req = this.CreateRequest(uri, HttpMethod.Get, headers, cookies, authentication);
-            return new HttpRequest { Session = new DotNetHttpSession { Request = req } };
-        }
-
-        public HttpRequest CreatePostRequest(Uri uri,
-            Dictionary<string, List<string>>? headers = null,
-            string? cookies = null,
-            AuthenticationInfo? authentication = null,
-            byte[]? body = null)
-        {
-            var req = this.CreateRequest(uri, HttpMethod.Post, headers, cookies, authentication);
-            if (body != null)
-            {
-                req.Content = new ByteArrayContent(body);
-                if (headers != null && headers.TryGetValue("Content-Type", out List<string>? values))
-                {
-                    if (values != null && values.Count > 0)
-                    {
-                        req.Content.Headers.ContentType = new MediaTypeHeaderValue(values[0]);
-                    }
-                }
-            }
-            return new HttpRequest { Session = new DotNetHttpSession { Request = req } };
         }
 
         public HttpResponse Send(HttpRequest request)
@@ -137,7 +140,7 @@ namespace XDM.Core.Clients.Http
             r = session.Request;
             try
             {
-                response = this.hc!.Send(r, HttpCompletionOption.ResponseHeadersRead, cts.Token);
+                response = _client.SendAsync(r, HttpCompletionOption.ResponseHeadersRead).Result;
                 response.EnsureSuccessStatusCode();
             }
             catch (HttpRequestException we)
@@ -151,16 +154,9 @@ namespace XDM.Core.Clients.Http
 
         public void Dispose()
         {
-            lock (this)
-            {
-                try
-                {
-                    disposed = true;
-                    cts.Cancel();
-                    this.hc?.Dispose();
-                }
-                catch { }
-            }
+            disposed = true;
+            _client.Dispose();
+            _handler.Dispose();
         }
 
         public void Close()

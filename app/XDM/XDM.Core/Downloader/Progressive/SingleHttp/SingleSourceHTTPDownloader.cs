@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
@@ -16,11 +16,11 @@ namespace XDM.Core.Downloader.Progressive.SingleHttp
     {
         private SingleSourceHTTPDownloaderState? state;
         private bool init;
-        public override Uri? PrimaryUrl => this.state?.Url;
+        public override Uri? PrimaryUrl => this.state?.Url ?? new Uri("about:blank");
 
         public SingleSourceHTTPDownloader(SingleSourceHTTPDownloadInfo info, IHttpClient? hc = null,
             AuthenticationInfo? authentication = null, ProxyInfo? proxy = null,
-            BaseMediaProcessor mediaProcessor = null, bool convertToMp3 = false)
+            BaseMediaProcessor? mediaProcessor = null, bool convertToMp3 = false)
         {
             Id = Guid.NewGuid().ToString();
 
@@ -28,8 +28,8 @@ namespace XDM.Core.Downloader.Progressive.SingleHttp
             {
                 Url = new Uri(info.Uri),
                 Id = this.Id,
-                Cookies = info.Cookies,
-                Headers = info.Headers,
+                Cookies = info.Cookies ?? new Dictionary<string, string>(),
+                Headers = info.Headers ?? new Dictionary<string, string>(),
                 TempDir = Path.Combine(Config.Instance.TempDir, Id),
                 Authentication = authentication,
                 Proxy = proxy,
@@ -47,24 +47,23 @@ namespace XDM.Core.Downloader.Progressive.SingleHttp
             }
 
             this.TargetFileName = FileHelper.SanitizeFileName(info.File);
-            this.http = hc;
-            this.mediaProcessor = mediaProcessor;
+            this.http = hc ?? new DefaultHttpClient();
+            this.mediaProcessor = mediaProcessor ?? new DefaultMediaProcessor();
         }
 
-        public SingleSourceHTTPDownloader(string id, IHttpClient? http = null,
-            BaseMediaProcessor mediaProcessor = null)
+        public SingleSourceHTTPDownloader(string id, IHttpClient http, BaseMediaProcessor mediaProcessor)
         {
             Id = id;
             cancelFlag = new();
-            this.http = http;
-            this.mediaProcessor = mediaProcessor;
+            this.http = http ?? throw new ArgumentNullException(nameof(http));
+            this.mediaProcessor = mediaProcessor ?? throw new ArgumentNullException(nameof(mediaProcessor));
         }
 
         public void SetDownloadInfo(SingleSourceHTTPDownloadInfo info)
         {
             this.state!.Url = new Uri(info.Uri);
-            this.state.Cookies = info.Cookies;
-            this.state.Headers = info.Headers;
+            this.state.Cookies = info.Cookies ?? new Dictionary<string, string>();
+            this.state.Headers = info.Headers ?? new Dictionary<string, string>();
             this.SaveState();
         }
 

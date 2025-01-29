@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
@@ -82,6 +82,10 @@ namespace YDLWrapper
             try
             {
                 ydlProc = Process.Start(pb);
+                if (ydlProc == null)
+                {
+                    throw new InvalidOperationException("Failed to start YDL process");
+                }
                 ydlProc.OutputDataReceived += (a, b) =>
                 {
                     if (b.Data != null)

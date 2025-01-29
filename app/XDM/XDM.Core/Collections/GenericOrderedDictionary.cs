@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -7,7 +7,7 @@ using System.Text;
 
 namespace XDM.Core.Collections
 {
-    public class GenericOrderedDictionary<K, V> : IDictionary<K, V>
+    public class GenericOrderedDictionary<K, V> : IDictionary<K, V> where K : notnull
     {
         private readonly List<K> keys = new();
         private readonly Dictionary<K, V> dict = new();

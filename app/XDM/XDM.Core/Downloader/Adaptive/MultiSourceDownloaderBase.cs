@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -600,7 +600,7 @@ namespace XDM.Core.Downloader.Adaptive
             //this.fileNameFetchMode = fileNameFetchMode;
         }
 
-        public void SetTargetDirectory(string folder)
+        public void SetTargetDirectory(string? folder)
         {
             this.TargetDir = folder;
         }

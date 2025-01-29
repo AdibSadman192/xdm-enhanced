@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,6 +6,10 @@ using XDM.Core;
 
 namespace XDM.Core.Clients.Http
 {
+    /// <summary>
+    /// Factory class for creating HTTP clients based on the platform and requirements.
+    /// Supports multiple HTTP client implementations including WinHttp, WinInet, and .NET HttpClient.
+    /// </summary>
     public static class HttpClientFactory
     {
         public static IHttpClient NewHttpClient(ProxyInfo? proxyInfo)

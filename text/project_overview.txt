@@ -1,0 +1,103 @@
+Xtreme Download Manager (XDM) - Enhanced Edition
+
+Overview:
+XDM is a powerful download manager that supports various protocols and integrates with multiple browsers. This enhanced edition includes modern features, improved security, and better performance.
+
+Key Features:
+
+1. Core Download Management:
+- Multi-threaded downloads
+- Resume capability
+- Speed limiting
+- Bandwidth management
+- Queue management
+- File integrity verification
+
+2. Browser Integration:
+- Chrome, Edge, and Brave browser support
+- Manifest V3 compliant extensions
+- Video detection and capture
+- Download filtering
+- Custom file handling
+
+3. Video Platform Support:
+- YouTube (including Shorts)
+- Vimeo
+- Dailymotion
+- Support for HLS and DASH streaming
+- Adaptive bitrate handling
+- Quality selection
+- Format conversion
+
+4. Cloud Storage Integration:
+- OneDrive support
+- Google Drive integration
+- Dropbox connectivity
+- Automatic upload after download
+- Cloud-to-cloud transfer
+- Category-based organization
+
+5. Batch Operations:
+- Batch renaming with patterns
+- Batch moving/organizing
+- Category assignment
+- Custom regex patterns
+- Progress tracking
+
+6. Security Features:
+- Secure password storage (DPAPI)
+- HTTPS certificate validation
+- File integrity checking
+- Secure proxy support
+- Enhanced error handling
+
+7. User Interface:
+- Modern WPF interface
+- MVVM architecture
+- Dark/Light themes
+- Custom layouts
+- Progress visualization
+- Download speed graphs
+
+Technical Details:
+
+1. Architecture:
+- MVVM pattern
+- Dependency Injection
+- Modular design
+- Event-driven communication
+
+2. Technologies:
+- .NET 6.0
+- C# 9.0
+- WPF
+- Browser Extensions (Manifest V3)
+- FFmpeg for media handling
+
+3. Security:
+- Windows DPAPI
+- SHA-256 hashing
+- SSL/TLS
+- Certificate validation
+
+4. Performance:
+- Memory pooling
+- Efficient buffer management
+- Smart threading
+- Optimized I/O operations
+
+Development Guidelines:
+1. Follow SOLID principles
+2. Use dependency injection
+3. Write unit tests
+4. Document public APIs
+5. Follow security best practices
+6. Maintain backward compatibility
+
+Future Plans:
+1. Add more streaming platforms
+2. Implement additional cloud providers
+3. Enhance video processing
+4. Add more batch operations
+5. Improve UI customization
+6. Add more security features

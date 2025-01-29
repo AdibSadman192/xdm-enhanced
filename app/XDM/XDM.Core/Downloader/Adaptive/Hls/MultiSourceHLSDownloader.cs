@@ -1,4 +1,4 @@
-﻿using XDM.Core.MediaParser.Hls;
+using XDM.Core.MediaParser.Hls;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -25,22 +25,22 @@ namespace XDM.Core.Downloader.Adaptive.Hls
                 var state = _state as MultiSourceHLSDownloadState;
                 if (state == null)
                 {
-                    return null;
+                    return new Uri("about:blank");
                 }
                 if (state.NonMuxedVideoPlaylistUrl != null) return state.NonMuxedVideoPlaylistUrl;
                 if (state.MuxedPlaylistUrl != null) return state.MuxedPlaylistUrl;
-                return null;
+                return new Uri("about:blank");
             }
         }
-        public MultiSourceHLSDownloader(MultiSourceHLSDownloadInfo info, IHttpClient http = null,
-            BaseMediaProcessor mediaProcessor = null,
-            AuthenticationInfo? authentication = null, ProxyInfo? proxy = null) : base(info, http, mediaProcessor)
+        public MultiSourceHLSDownloader(MultiSourceHLSDownloadInfo info, IHttpClient? http = null,
+            BaseMediaProcessor? mediaProcessor = null,
+            AuthenticationInfo? authentication = null, ProxyInfo? proxy = null) : base(info, http ?? new DefaultHttpClient(), mediaProcessor ?? new DefaultMediaProcessor())
         {
             var state = new MultiSourceHLSDownloadState
             {
                 Id = base.Id,
-                Cookies = info.Cookies,
-                Headers = info.Headers,
+                Cookies = info.Cookies ?? new Dictionary<string, string>(),
+                Headers = info.Headers ?? new Dictionary<string, string>(),
                 Authentication = authentication,
                 Proxy = proxy,
                 TempDirectory = Path.Combine(Config.Instance.TempDir, Id)
@@ -48,7 +48,7 @@ namespace XDM.Core.Downloader.Adaptive.Hls
 
             if (state.Authentication == null)
             {
-                state.Authentication = Helpers.GetAuthenticationInfoFromConfig(new Uri(info.VideoUri ?? info.AudioUri));
+                state.Authentication = Helpers.GetAuthenticationInfoFromConfig(new Uri(info.VideoUri ?? info.AudioUri ?? "about:blank"));
             }
 
             Log.Debug("Video playlist url: " + info.VideoUri +
@@ -69,7 +69,7 @@ namespace XDM.Core.Downloader.Adaptive.Hls
             this.TargetFileName = FileHelper.SanitizeFileName(info.File);
         }
 
-        public MultiSourceHLSDownloader(string id, IHttpClient http = null, BaseMediaProcessor mediaProcessor = null) : base(id, http, mediaProcessor)
+        public MultiSourceHLSDownloader(string id, IHttpClient? http = null, BaseMediaProcessor? mediaProcessor = null) : base(id, http ?? new DefaultHttpClient(), mediaProcessor ?? new DefaultMediaProcessor())
         {
         }
 

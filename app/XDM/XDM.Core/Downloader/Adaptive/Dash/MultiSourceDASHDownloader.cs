@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -19,19 +19,19 @@ namespace XDM.Core.Downloader.Adaptive.Dash
             get
             {
                 var state = _state as MultiSourceDASHDownloadState;
-                return state == null ? null : new Uri(state.Url);
+                return state == null ? new Uri("about:blank") : new Uri(state.Url);
             }
         }
-        public MultiSourceDASHDownloader(MultiSourceDASHDownloadInfo info, IHttpClient http = null,
-            BaseMediaProcessor mediaProcessor = null,
-            AuthenticationInfo? authentication = null, ProxyInfo? proxy = null) : base(info, http, mediaProcessor)
+        public MultiSourceDASHDownloader(MultiSourceDASHDownloadInfo info, IHttpClient? http = null,
+            BaseMediaProcessor? mediaProcessor = null,
+            AuthenticationInfo? authentication = null, ProxyInfo? proxy = null) : base(info, http ?? new DefaultHttpClient(), mediaProcessor ?? new DefaultMediaProcessor())
         {
             var state = new MultiSourceDASHDownloadState
             {
                 Id = base.Id,
                 Demuxed = info.VideoSegments != null && info.AudioSegments != null,
-                Cookies = info.Cookies,
-                Headers = info.Headers,
+                Cookies = info.Cookies ?? new Dictionary<string, string>(),
+                Headers = info.Headers ?? new Dictionary<string, string>(),
                 Url = info.Url,
                 Authentication = authentication,
                 Proxy = proxy,
@@ -124,8 +124,8 @@ namespace XDM.Core.Downloader.Adaptive.Dash
             }
         }
 
-        public MultiSourceDASHDownloader(string id, IHttpClient http = null,
-            BaseMediaProcessor mediaProcessor = null) : base(id, http, mediaProcessor)
+        public MultiSourceDASHDownloader(string id, IHttpClient? http = null,
+            BaseMediaProcessor? mediaProcessor = null) : base(id, http ?? new DefaultHttpClient(), mediaProcessor ?? new DefaultMediaProcessor())
         {
 
         }
