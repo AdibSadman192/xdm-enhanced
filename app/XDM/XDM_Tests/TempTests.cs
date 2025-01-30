@@ -1,7 +1,6 @@
-﻿
 using NUnit.Framework;
 using System;
-using XDM.Core.Lib.Util;
+using XDM.Core.Util;
 
 namespace XDM.SystemTests
 {

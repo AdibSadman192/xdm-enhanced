@@ -34,7 +34,54 @@ XDM seamlessly integrates with Google Chrome, Mozilla Firefox Quantum, Opera, Vi
 - Resumes broken / dead downloads caused by connection problem, power failure or session expiration.
 - Works with Windows ISA, auto proxy scripts, proxy servers, NTLM, Kerberos authentication.
 
+## Building from Source
 
+### Prerequisites
+- .NET 6.0 SDK or later
+- Visual Studio 2022 or later (optional, for IDE support)
+
+### Build Instructions
+
+1. Clone the repository:
+```powershell
+git clone https://github.com/AdibSadman192/xdm-enhanced.git
+cd xdm-enhanced
+```
+
+2. Build the solution:
+```powershell
+cd app/XDM
+dotnet build XDM.sln --configuration Release
+```
+
+3. Run the application:
+```powershell
+cd XDM.Wpf/bin/Release/net6.0-windows
+./XDM.Wpf.exe
+```
+
+### Creating Release Package
+
+1. Build the release package:
+```powershell
+cd app/XDM
+dotnet publish XDM.Wpf/XDM.Wpf.csproj -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true
+```
+
+2. The packaged files will be available in:
+```
+app/XDM/XDM.Wpf/bin/Release/net6.0-windows/win-x64/publish/
+```
+
+3. To create a release:
+   - Go to your GitHub repository
+   - Click on "Releases" > "Create a new release"
+   - Create a new tag (e.g., v1.0.0)
+   - Upload the following files from the publish directory:
+     - XDM.Wpf.exe (Main application)
+     - Any additional DLLs or dependencies
+   - Add release notes describing the changes
+   - Click "Publish release"
 
 [//]: #ImageLinks
 [01]: https://i.stack.imgur.com/s7ViA.jpg

@@ -30,7 +30,7 @@ namespace XDM.Core
     {
         public string TargetFileName { get; set; } = string.Empty;
         public string PrimaryUrl { get; set; } = string.Empty;
-        public DownloadStatus Status { get; set; }
+        public XDM.Core.Download.DownloadStatus Status { get; set; }
         public string FileNameFetchMode { get; set; } = string.Empty;
         public string Authentication { get; set; } = string.Empty;
         public string ProxyInfo { get; set; } = string.Empty;
@@ -38,10 +38,5 @@ namespace XDM.Core
 
     public class FinishedDownloadItem : DownloadItemBase
     {
-    }
-
-    public enum DownloadStatus
-    {
-        Downloading, Stopped, Finished, Waiting
     }
 }

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
@@ -15,7 +15,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)BrowserMonitoring\NativeMessagingHostConfigurer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Clients\Http\Utils.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util\ExtensionRegistrationHelper.cs" />
-    <Compile Include="..\XDM.Core\Ipc\IpcServer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ipc\IpcServer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SingleInstance.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Updater\AppUpdater.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ClipboardMonitor.cs" />
@@ -31,19 +31,19 @@
     <Compile Include="$(MSBuildThisFileDirectory)Util\ParsingHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util\PlatformHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)YDLWrapper\YtBinary.cs" />
-    <Compile Include="..\XDM.Core\BrowserMonitoring\VideoTracker.cs" />
-    <Compile Include="..\XDM.Core\IVideoTracker.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BrowserMonitoring\VideoTracker.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BrowserMonitoring\IVideoTracker.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ILinkRefresher.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LinkRefresher.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Links.cs" />
-    <Compile Include="..\XDM.Core\ApplicationContext.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ApplicationContext.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BrowserMonitoring\IpcPipeMessageProcessor.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BrowserMonitoring\BrowserMonitor.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BrowserMonitoring\IpcHttpMessageProcessor.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BrowserMonitoring\JsonMessageParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BrowserMonitoring\NativeMessagingConfigurer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BrowserMonitoring\PipeChannel.cs" />
-    <Compile Include="..\XDM.Core\BrowserMonitoring\IpcPipe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BrowserMonitoring\IpcPipe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BrowserMonitoring\VideoUrlHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)HttpServer\HttpParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)HttpServer\HttpServer.cs" />
@@ -64,10 +64,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)MediaParser\YouTube\YoutubeDataFormatParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TraceLog\Log.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Translations\TextResource.cs" />
-    <Compile Include="..\XDM.Core\UI\BatchDownloadUIController.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\BatchDownloadUIController.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\CommonUtils.cs" />
-    <Compile Include="..\XDM.Core\UI\ComponentUpdaterUIController.cs" />
-    <Compile Include="..\XDM.Core\UI\DownloadCompleteUIController.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\ComponentUpdaterUIController.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\DownloadCompleteUIController.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\DownloadSelectionUIController.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\IconMap.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\LinkRefreshDialogUIController.cs" />
@@ -107,9 +107,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)ErrorCode.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GenericEventArgs.cs" />
-    <Compile Include="..\XDM.Core\IApplicationCore.cs" />
-    <Compile Include="..\XDM.Core\IApplication.cs" />
-    <Compile Include="..\XDM.Core\IPlatformClipboardMonitor.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IApplicationCore.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IApplication.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IPlatformClipboardMonitor.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\IDownloadCompleteDialog.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\IFileSelectable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\INewDownloadDialog.cs" />
@@ -145,7 +145,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Downloader\Chunk.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Downloader\CountdownLatch.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Downloader\DownloadFailedEventArgs.cs" />
-    <Compile Include="..\XDM.Core\IO\DownloadStateIO.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IO\DownloadStateIO.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Downloader\DownloadTypes.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Downloader\FileNameFetchMode.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Downloader\IBaseDownloader.cs" />
@@ -166,7 +166,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\DownloadLaterEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\DownloadListEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\FileBrowsedEventArgs.cs" />
-    <Compile Include="..\XDM.Core\UI\IApplicationWindow.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\IApplicationWindow.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\IBatchDownloadView.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\IButton.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\IDownloadSelectionView.cs" />
@@ -181,10 +181,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\QueueSelectionEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util\BrowserLauncher.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util\Helpers.cs" />
-    <Compile Include="..\XDM.Core\IO\ConfigIO.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IO\ConfigIO.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util\TimeHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util\Win32NativeMethods.cs" />
-    <Compile Include="..\XDM.Core\Application.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Application.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CallbackActions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ErrorMessages.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IconResource.cs" />
@@ -195,7 +195,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)RemixIcon.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Scheduler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UIActions.cs" />
-    <Compile Include="..\XDM.Core\ApplicationCore.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ApplicationCore.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)YDLWrapper\Structs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)YDLWrapper\YDLOutputParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)YDLWrapper\YDLProcess.cs" />

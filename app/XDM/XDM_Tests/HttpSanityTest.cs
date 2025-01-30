@@ -1,17 +1,12 @@
+using NUnit.Framework;
 using System;
 using System.IO;
-using System.Threading.Tasks;
-using NUnit.Framework;
-using XDM.Core.Lib.Common;
-//using XDM.Core.Lib.Downloader.YT.Dash;
 using System.Threading;
-using System.Collections.Generic;
-
-using static XDM.SystemTests.TestUtil;
-using XDM.Core.Lib.Util;
-using Serilog;
-using XDM.Core.Lib.Downloader.Progressive.SingleHttp;
-using XDM.Core.Lib.Downloader.Progressive.DualHttp;
+using XDM.Core;
+using XDM.Core.Util;
+using System.Threading.Tasks;
+using XDM.Core.Downloader.Progressive.SingleHttp;
+using XDM.Core.Downloader.Progressive.DualHttp;
 
 namespace XDM.SystemTests
 {

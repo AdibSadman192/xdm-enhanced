@@ -1,9 +1,9 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using XDM.Core.Lib.Common;
+using XDM.Core;
 
 namespace XDM.SystemTests
 {

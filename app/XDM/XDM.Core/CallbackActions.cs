@@ -1,7 +1,10 @@
 using System;
-using System.IO;
-using TraceLog;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using XDM.Core;
+using XDM.Core.Download;
 using XDM.Core.UI;
 
 namespace XDM.Core

@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using XDM.Core.IO;
 using XDM.Core.Network;
+using XDM.Core.Download.EventArgs;
 
 namespace XDM.Core.Download
 {
@@ -24,9 +25,9 @@ namespace XDM.Core.Download
         private DateTime? _scheduledTime;
         private Exception _lastError;
 
-        public event EventHandler<ProgressEventArgs> ProgressChanged;
-        public event EventHandler<ErrorEventArgs> ErrorOccurred;
-        public event EventHandler<ScheduleEventArgs> ScheduleChanged;
+        public event EventHandler<EventArgs.ProgressEventArgs> ProgressChanged;
+        public event EventHandler<EventArgs.ErrorEventArgs> ErrorOccurred;
+        public event EventHandler<EventArgs.ScheduleEventArgs> ScheduleChanged;
 
         public string Id { get; }
         public string Url => _url;
@@ -189,53 +190,17 @@ namespace XDM.Core.Download
 
         private void OnProgressChanged()
         {
-            ProgressChanged?.Invoke(this, new ProgressEventArgs(_progress, _downloadedBytes, _totalBytes));
+            ProgressChanged?.Invoke(this, new EventArgs.ProgressEventArgs(_progress, _downloadedBytes, _totalBytes));
         }
 
         private void OnErrorOccurred()
         {
-            ErrorOccurred?.Invoke(this, new ErrorEventArgs(_lastError));
+            ErrorOccurred?.Invoke(this, new EventArgs.ErrorEventArgs(_lastError));
         }
 
         private void OnScheduleChanged()
         {
-            ScheduleChanged?.Invoke(this, new ScheduleEventArgs(_status, _scheduledTime));
-        }
-    }
-
-    public class ProgressEventArgs : EventArgs
-    {
-        public double Progress { get; }
-        public long DownloadedBytes { get; }
-        public long TotalBytes { get; }
-
-        public ProgressEventArgs(double progress, long downloadedBytes, long totalBytes)
-        {
-            Progress = progress;
-            DownloadedBytes = downloadedBytes;
-            TotalBytes = totalBytes;
-        }
-    }
-
-    public class ErrorEventArgs : EventArgs
-    {
-        public Exception Error { get; }
-
-        public ErrorEventArgs(Exception error)
-        {
-            Error = error;
-        }
-    }
-
-    public class ScheduleEventArgs : EventArgs
-    {
-        public DownloadStatus Status { get; }
-        public DateTime? ScheduledTime { get; }
-
-        public ScheduleEventArgs(DownloadStatus status, DateTime? scheduledTime)
-        {
-            Status = status;
-            ScheduledTime = scheduledTime;
+            ScheduleChanged?.Invoke(this, new EventArgs.ScheduleEventArgs(_scheduledTime));
         }
     }
 
@@ -244,21 +209,9 @@ namespace XDM.Core.Download
         Queued,
         Downloading,
         Paused,
-        Cancelled,
         Completed,
-        Scheduled,
-        Failed
-    }
-
-    public enum SchedulePriority
-    {
-        Immediate,
-        OffPeak,
-        BestEffort
-    }
-
-    public class SchedulePreference
-    {
-        public SchedulePriority Priority { get; set; }
+        Failed,
+        Cancelled,
+        Scheduled
     }
 }

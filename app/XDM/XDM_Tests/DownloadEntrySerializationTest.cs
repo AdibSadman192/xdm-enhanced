@@ -1,10 +1,10 @@
-﻿using System;
+using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json;
-using NUnit.Framework;
-using XDM.Core.Lib.Common;
-using XDM.Core.Lib.Downloader;
+using XDM.Core;
+using XDM.Core.Downloader;
 
 namespace XDM.SystemTests
 {

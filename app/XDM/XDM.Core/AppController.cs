@@ -101,54 +101,30 @@ namespace XDM.Core
 
         public async Task<NetworkUsage> GetNetworkUsageAsync()
         {
-            try
-            {
-                return await _networkMonitor.GetUsageAsync();
-            }
-            catch (Exception ex)
-            {
-                await _view.ShowErrorAsync("Network Error", ex.Message);
-                return new NetworkUsage();
-            }
+            return await _networkMonitor.GetCurrentUsageAsync();
         }
 
         public async Task<BandwidthPrediction> GetBandwidthPredictionAsync(DateTime targetTime)
         {
-            try
-            {
-                return await _bandwidthPredictor.GetPredictionAsync(targetTime);
-            }
-            catch (Exception ex)
-            {
-                await _view.ShowErrorAsync("Prediction Error", ex.Message);
-                return new BandwidthPrediction();
-            }
+            return await _bandwidthPredictor.PredictBandwidthAsync(targetTime);
         }
 
-        public async Task<bool> UpdateSettingsAsync(AppSettings settings)
+        public async Task UpdateSettingsAsync(AppSettings settings)
         {
             try
             {
-                return await _service.UpdateSettingsAsync(settings);
+                await _service.UpdateSettingsAsync(settings);
+                await _view.RefreshSettingsAsync();
             }
             catch (Exception ex)
             {
                 await _view.ShowErrorAsync("Settings Error", ex.Message);
-                return false;
             }
         }
 
         public async Task<AppSettings> GetSettingsAsync()
         {
-            try
-            {
-                return await _service.GetSettingsAsync();
-            }
-            catch (Exception ex)
-            {
-                await _view.ShowErrorAsync("Settings Error", ex.Message);
-                return new AppSettings();
-            }
+            return await _service.GetSettingsAsync();
         }
 
         public async Task ShutdownAsync()
@@ -168,19 +144,7 @@ namespace XDM.Core
             try
             {
                 var usage = await GetNetworkUsageAsync();
-                var downloads = await _service.GetDownloadsAsync();
-
-                var status = new NetworkStatus
-                {
-                    CurrentSpeed = usage.AverageBytesPerSecond,
-                    AverageSpeed = usage.AverageBytesPerSecond,
-                    NetworkType = usage.NetworkType.ToString(),
-                    SignalStrength = usage.SignalStrength,
-                    ActiveDownloads = downloads.Count(d => d.Status == DownloadStatus.Downloading),
-                    QueuedDownloads = downloads.Count(d => d.Status == DownloadStatus.Queued)
-                };
-
-                await _view.UpdateNetworkStatusAsync(status);
+                await _view.UpdateNetworkStatusAsync(usage);
             }
             catch (Exception ex)
             {

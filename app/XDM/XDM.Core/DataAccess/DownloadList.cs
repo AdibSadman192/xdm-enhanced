@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.SQLite;
@@ -9,6 +9,7 @@ using TraceLog;
 using XDM.Core;
 using XDM.Core.DataAccess.Extensions;
 using XDM.Core.Downloader;
+using XDM.Core.Download;
 
 namespace XDM.Core.DataAccess
 {

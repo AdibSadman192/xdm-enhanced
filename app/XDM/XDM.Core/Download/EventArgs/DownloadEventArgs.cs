@@ -1,8 +1,8 @@
 using System;
 
-namespace XDM.Core.Download
+namespace XDM.Core.Download.EventArgs
 {
-    public class ProgressEventArgs : EventArgs
+    public class ProgressEventArgs : System.EventArgs
     {
         public double Progress { get; }
         public long DownloadedBytes { get; }
@@ -16,7 +16,7 @@ namespace XDM.Core.Download
         }
     }
 
-    public class ErrorEventArgs : EventArgs
+    public class ErrorEventArgs : System.EventArgs
     {
         public Exception Error { get; }
 
@@ -26,7 +26,7 @@ namespace XDM.Core.Download
         }
     }
 
-    public class ScheduleEventArgs : EventArgs
+    public class ScheduleEventArgs : System.EventArgs
     {
         public DownloadStatus Status { get; }
         public DateTime? ScheduledTime { get; }

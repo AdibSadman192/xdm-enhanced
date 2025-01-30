@@ -1,4 +1,6 @@
 using System;
+using XDM.Core;
+using XDM.Core.Download;
 
 namespace XDM.Core.Download
 {

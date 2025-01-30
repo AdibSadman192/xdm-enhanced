@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
-using XDM.Core.UI;
+using System.Threading.Tasks;
 using XDM.Core;
-using XDM.Core.Downloader;
+using XDM.Core.Download;
+using XDM.Core.Download.DownloadStatus;
 
 namespace XDM.Core
 {

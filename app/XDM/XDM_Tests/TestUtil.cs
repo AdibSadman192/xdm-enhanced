@@ -1,13 +1,13 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Security.Cryptography;
-using System.IO;
-using XDM.Core.Lib.Common;
 using System.Threading;
-using XDM.Core.Lib.Downloader;
+using XDM.Core;
+using XDM.Core.Downloader;
 
 namespace XDM.SystemTests
 {

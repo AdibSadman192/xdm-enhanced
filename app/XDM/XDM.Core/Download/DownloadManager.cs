@@ -50,10 +50,9 @@ namespace XDM.Core.Download
 
         private async Task ProcessDownloadAsync(string downloadId, DownloadTask task)
         {
-            using var buffer = new PooledBuffer(DefaultBufferSize);
-            
             try
             {
+                using var buffer = new IO.PooledBuffer(DefaultBufferSize);
                 await task.StartAsync(buffer);
             }
             catch (Exception ex)
@@ -62,6 +61,18 @@ namespace XDM.Core.Download
             }
             finally
             {
+                _activeTasks.TryRemove(downloadId, out _);
+            }
+        }
+
+        /// <summary>
+        /// Cancels an active download
+        /// </summary>
+        public void CancelDownload(string downloadId)
+        {
+            if (_activeTasks.TryGetValue(downloadId, out var task))
+            {
+                task.Cancel();
                 _activeTasks.TryRemove(downloadId, out _);
             }
         }
@@ -86,36 +97,6 @@ namespace XDM.Core.Download
             {
                 task.Resume();
             }
-        }
-
-        /// <summary>
-        /// Cancels and removes a download
-        /// </summary>
-        public void CancelDownload(string downloadId)
-        {
-            if (_activeTasks.TryGetValue(downloadId, out var task))
-            {
-                task.Cancel();
-                _activeTasks.TryRemove(downloadId, out _);
-            }
-        }
-    }
-
-    /// <summary>
-    /// Represents a buffer from the pool with automatic return
-    /// </summary>
-    internal sealed class PooledBuffer : IDisposable
-    {
-        public byte[] Buffer { get; }
-
-        public PooledBuffer(int size)
-        {
-            Buffer = BufferPool.Rent(size);
-        }
-
-        public void Dispose()
-        {
-            BufferPool.Return(Buffer);
         }
     }
 }

@@ -1,15 +1,15 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using NUnit.Framework;
-using XDM.Core.Lib.Common;
-using System.Threading;
+using XDM.Core;
+using XDM.Core.MediaProcessor;
+using System.Collections.Generic;
+using XDM.Core.Downloader.Adaptive.Hls;
 using MediaParser.Hls;
 using Serilog;
-using XDM.Core.Lib.Common.MediaProcessor;
 using System.Net;
-using XDM.Core.Lib.Downloader.Adaptive.Hls;
 
 namespace XDM.SystemTests
 {
@@ -585,7 +585,3 @@ namespace XDM.SystemTests
         }
     }
 }
-
-
-
-
